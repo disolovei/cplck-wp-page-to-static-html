@@ -37,7 +37,7 @@
                         wrapper.html(response.data.html);
                     }
                 },
-                fail: function(response) {
+                error: function(response) {
                     if ( typeof response.data.message === 'undefined' ) {
                         alert(response);
                     } else {

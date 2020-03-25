@@ -34,10 +34,10 @@ final class Page_To_Static_HTML {
 
             do_action( 'ptsh_page_saved', $slug );
 
-            PTSH_Utils::send_success([
+            PTSH_Utils::send_success( [
                 'html'      => PTSH_Meta_Box::the_already_saved_markup( true ),
                 'message'   => 'Saved success!',
-            ]);
+            ] );
         }
 
         throw new PTSH_Exception( 'Cannot write HTML to file!' );
@@ -76,19 +76,15 @@ final class Page_To_Static_HTML {
     /**
      *
      */
-    public function include_assets() {
+    public function include_admin_assets() {
         wp_enqueue_script( 'ptsh-admin', PTSH_PLUGIN_DIR_URL . 'js/admin.js', ['jquery'], null, true );
         wp_localize_script( 'ptsh-admin', 'ptshadmin', [
             'nonce' => PTSH_AJAX::get_ajax_nonce(),
         ] );
     }
 
-    /**
-     * @param $body
-     * @return string|string[]|null
-     */
-    public function body_filter( $body ) {
-        return preg_replace( ['/>\s+</', '/(?:[\n|\t]|<!--.*-->)/U', '/ {2,}]/'], ['><','', ' '], $body );
+    public function include_assets() {
+        wp_enqueue_script( 'ptsh-main', PTSH_PLUGIN_DIR_URL . 'js/frontend.js', ['jquery'], null, true );
     }
 
     /**
@@ -105,7 +101,8 @@ final class Page_To_Static_HTML {
      */
     private function init_hooks() {
         add_action( 'add_meta_boxes', ['PTSH_Meta_Box', 'create_meta_box'] );
-        add_action( 'admin_enqueue_scripts', [$this, 'include_assets'] );
+        add_action( 'admin_enqueue_scripts', [$this, 'include_admin_assets'] );
+        add_action( 'wp_enqueue_scripts', [$this, 'include_assets'] );
 
         //AJAX Actions
         add_action( 'wp_ajax_ptsh_save', ['PTSH_AJAX', 'save'] );
@@ -117,7 +114,7 @@ final class Page_To_Static_HTML {
         add_action( 'ptsh_page_delete', ['PTSH_Hooks', 'delete_page'] );
         add_action( 'ptsh_page_regenerate', ['PTSH_Hooks', 'save_page'] );
 
-        add_filter( 'ptsh_page_body', [$this, 'body_filter'] );
+        add_filter( 'ptsh_page_body', ['PTSH_HTML', 'prepare_page'] );
     }
 
     /**

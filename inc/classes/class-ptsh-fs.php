@@ -50,7 +50,7 @@ class PTSH_FS {
     private static function prepare_folder( $slug ) {
         $folder_path = self::get_file_path_by_slug( $slug, false );
 
-        if ( ! file_exists( $folder_path ) && ! wp_mkdir_p( $folder_path ) ) {
+        if ( ! self::is_accessible( $folder_path ) && ! wp_mkdir_p( $folder_path ) ) {
             throw new PTSH_Exception( "Cannot create a folder {$folder_path}!" );
         }
     }
@@ -58,7 +58,7 @@ class PTSH_FS {
     /**
      * TODO
      */
-    private static function prepare_path( $path ) {
-        return $path;
+    private static function is_accessible( $path ) {
+        return is_writable( $path ) && is_readable( $path );
     }
 }
