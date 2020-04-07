@@ -41,12 +41,19 @@ class PTSH_Utils {
      * @return mixed
      */
     public static function prepare_slug( $slug ) {
-        $posts = get_posts( [
+        $get_posts_args = [
             'post_type'     => 'any',
             'numberposts'   => 1,
             'post_status'   => 'publish',
-            'name'          => $slug,
-        ] );
+        ];
+
+        if ( is_numeric( $slug ) ) {
+            $get_posts_args['include'] = (int)$slug;
+        } else {
+            $get_posts_args['name'] = $slug;
+        }
+
+        $posts = get_posts( $get_posts_args );
 
         return empty( $posts ) ? $slug : str_replace( get_option( 'siteurl' ), '', get_the_permalink( $posts[0]->ID ) );
     }

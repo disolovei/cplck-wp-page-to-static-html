@@ -44,7 +44,7 @@ class PTSH_Request {
             'filename'    => null
         ) );
 
-        if ( $remote_get['response']['code'] !== 200 ) {
+        if ( is_wp_error( $remote_get ) || $remote_get['response']['code'] !== 200 ) {
             throw new PTSH_Exception( "Cannot fetch a page {$permalink}!" );
         }
 

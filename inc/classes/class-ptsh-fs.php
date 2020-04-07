@@ -29,7 +29,7 @@ class PTSH_FS {
      * @return bool
      */
     public static function delete_page( $slug ) {
-        return self::is_page_saved( $slug ) && unlink( self::get_file_path_by_slug( $slug ) ) && rmdir( self::get_file_path_by_slug( $slug, false ) ); //refactor me
+        return self::is_page_saved( $slug ) ? unlink( self::get_file_path_by_slug( $slug ) ) && rmdir( self::get_file_path_by_slug( $slug, false ) ) : true;
     }
 
     /**
